@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Passengers</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <%- include('partials/header') %>
+    <div class="content">
+      <h2>All Passengers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Contact</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% passengers.forEach(passenger => { %>
+            <tr>
+              <td><%= passenger.passenger_id %></td>
+              <td><%= passenger.name %></td>
+              <td><%= passenger.age %></td>
+              <td><%= passenger.gender %></td>
+              <td><%= passenger.contact_no %></td>
+              <td><a href="/passengers/delete/<%= passenger.passenger_id %>">Delete</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <h3>Add Passenger</h3>
+      <form method="POST" action="/passengers/add">
+        <input name="name" placeholder="Passenger Name" required>
+        <input type="number" name="age" placeholder="Age" required>
+        <select name="gender" required>
+          <option value="">Select Gender</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+          <option value="O">Other</option>
+        </select>
+        <input name="contact_no" placeholder="Contact Number" required>
+        <button type="submit">Add Passenger</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

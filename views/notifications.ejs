@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Notifications</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <%- include('partials/header') %>
+    <div class="content">
+      <h2>All Notifications</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Notification ID</th>
+            <th>Passenger</th>
+            <th>Booking ID</th>
+            <th>Message</th>
+            <th>Type</th>
+            <th>Sent Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% notifications.forEach(notif => { %>
+            <tr style="background-color: <%= notif.is_read ? 'transparent' : '#fff3cd' %>">
+              <td><%= notif.notification_id %></td>
+              <td><%= notif.passenger_name %></td>
+              <td><%= notif.booking_id || 'N/A' %></td>
+              <td><%= notif.message_text %></td>
+              <td><%= notif.notification_type %></td>
+              <td><%= new Date(notif.sent_timestamp).toLocaleString() %></td>
+              <td><span style="color: <%= notif.is_read ? 'green' : 'orange' %>"><%= notif.is_read ? 'Read' : 'Unread' %></span></td>
+              <td>
+                <% if (!notif.is_read) { %>
+                  <a href="/notifications/mark-read/<%= notif.notification_id %>" style="background: #28a745; color: white; margin-right: 5px;">Mark Read</a>
+                <% } %>
+                <a href="/notifications/delete/<%= notif.notification_id %>">Delete</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <h3>Send Notification</h3>
+      <form method="POST" action="/notifications/add">
+        <select name="passenger_id" required>
+          <option value="">Select Passenger</option>
+          <% passengers.forEach(passenger => { %>
+            <option value="<%= passenger.passenger_id %>"><%= passenger.name %> - <%= passenger.contact_no %></option>
+          <% }) %>
+        </select>
+        <select name="booking_id">
+          <option value="">Select Booking (Optional)</option>
+          <% bookings.forEach(booking => { %>
+            <option value="<%= booking.booking_id %>">Booking #<%= booking.booking_id %> - <%= booking.passenger_name %> (<%= booking.train_name %>)</option>
+          <% }) %>
+        </select>
+        <textarea name="message_text" placeholder="Notification Message" rows="3" required></textarea>
+        <select name="notification_type" required>
+          <option value="">Select Notification Type</option>
+          <option value="SMS">SMS</option>
+          <option value="Email">Email</option>
+          <option value="App Alert">App Alert</option>
+          <option value="Push Notification">Push Notification</option>
+        </select>
+        <button type="submit">Send Notification</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

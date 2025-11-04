@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Payments</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <%- include('partials/header') %>
+    <div class="content">
+      <h2>All Payments</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Payment ID</th>
+            <th>Booking ID</th>
+            <th>Passenger</th>
+            <th>Amount</th>
+            <th>Payment Date</th>
+            <th>Method</th>
+            <th>Transaction ID</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% payments.forEach(payment => { %>
+            <tr>
+              <td><%= payment.payment_id %></td>
+              <td><%= payment.booking_id %></td>
+              <td><%= payment.passenger_name || 'N/A' %></td>
+              <td>₹<%= payment.amount %></td>
+              <td><%= new Date(payment.payment_date).toLocaleDateString() %></td>
+              <td><%= payment.payment_method %></td>
+              <td><%= payment.transaction_id %></td>
+              <td><span style="color: <%= payment.payment_status === 'Success' ? 'green' : payment.payment_status === 'Failed' ? 'red' : 'orange' %>"><%= payment.payment_status %></span></td>
+              <td><a href="/payments/delete/<%= payment.payment_id %>">Delete</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <h3>Add Payment</h3>
+      <form method="POST" action="/payments/add">
+        <select name="booking_id" required>
+          <option value="">Select Booking</option>
+          <% bookings.forEach(booking => { %>
+            <option value="<%= booking.booking_id %>">Booking #<%= booking.booking_id %> - <%= booking.passenger_name %> (<%= booking.train_name %>)</option>
+          <% }) %>
+        </select>
+        <input type="number" name="amount" placeholder="Amount (₹)" step="0.01" required>
+        <select name="payment_method" required>
+          <option value="">Select Payment Method</option>
+          <option value="Credit Card">Credit Card</option>
+          <option value="Debit Card">Debit Card</option>
+          <option value="UPI">UPI</option>
+          <option value="Net Banking">Net Banking</option>
+          <option value="Cash">Cash</option>
+        </select>
+        <input type="text" name="transaction_id" placeholder="Transaction ID" required>
+        <select name="payment_status" required>
+          <option value="">Select Status</option>
+          <option value="Success">Success</option>
+          <option value="Pending">Pending</option>
+          <option value="Failed">Failed</option>
+        </select>
+        <button type="submit">Add Payment</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

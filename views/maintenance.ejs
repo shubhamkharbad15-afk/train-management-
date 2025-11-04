@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Maintenance Records</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <%- include('partials/header') %>
+    <div class="content">
+      <h2>Maintenance Records</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Maintenance ID</th>
+            <th>Train Name</th>
+            <th>Maintenance Date</th>
+            <th>Description</th>
+            <th>Cost</th>
+            <th>Performed By</th>
+            <th>Next Scheduled</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% maintenanceRecords.forEach(record => { %>
+            <tr>
+              <td><%= record.maintenance_id %></td>
+              <td><%= record.train_name %></td>
+              <td><%= new Date(record.maintenance_date).toLocaleDateString() %></td>
+              <td><%= record.description_of_work %></td>
+              <td>₹<%= record.cost %></td>
+              <td><%= record.performed_by_employee_id || 'N/A' %></td>
+              <td><%= record.next_scheduled_maintenance_date ? new Date(record.next_scheduled_maintenance_date).toLocaleDateString() : 'Not Scheduled' %></td>
+              <td><a href="/maintenance/delete/<%= record.maintenance_id %>">Delete</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <h3>Add Maintenance Record</h3>
+      <form method="POST" action="/maintenance/add">
+        <select name="train_id" required>
+          <option value="">Select Train</option>
+          <% trains.forEach(train => { %>
+            <option value="<%= train.train_id %>"><%= train.train_name %> (<%= train.source %> - <%= train.destination %>)</option>
+          <% }) %>
+        </select>
+        <input type="date" name="maintenance_date" required>
+        <textarea name="description_of_work" placeholder="Description of Work" rows="3" required></textarea>
+        <input type="number" name="cost" placeholder="Cost (₹)" step="0.01" required>
+        <input type="text" name="performed_by_employee_id" placeholder="Employee ID (Optional)">
+        <input type="date" name="next_scheduled_maintenance_date" placeholder="Next Scheduled Date">
+        <button type="submit">Add Maintenance Record</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

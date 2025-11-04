@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Bookings</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <%- include('partials/header') %>
+    <div class="content">
+      <h2>All Bookings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Booking ID</th><th>Passenger Name</th><th>Train Name</th>
+            <th>Booking Date</th><th>Seat Number</th><th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% bookings.forEach(booking => { %>
+            <tr>
+              <td><%= booking.booking_id %></td>
+              <td><%= booking.passenger_name %></td>
+              <td><%= booking.train_name %></td>
+              <td><%= new Date(booking.booking_date).toLocaleDateString() %></td>
+              <td><%= booking.seat_no %></td>
+              <td><%= booking.status %></td>
+              <td><a href="/bookings/delete/<%= booking.booking_id %>">Cancel</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <h3>Create Booking</h3>
+      <form method="POST" action="/bookings/add">
+        <select name="passenger_id" required>
+          <option value="">Select Passenger</option>
+          <% passengers.forEach(passenger => { %>
+            <option value="<%= passenger.passenger_id %>"><%= passenger.name %></option>
+          <% }) %>
+        </select>
+        <select name="train_id" required>
+          <option value="">Select Train</option>
+          <% trains.forEach(train => { %>
+            <option value="<%= train.train_id %>"><%= train.train_name %> (<%= train.source %> - <%= train.destination %>)</option>
+          <% }) %>
+        </select>
+        <input type="number" name="seat_no" placeholder="Seat Number" required>
+        <button type="submit">Book Ticket</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

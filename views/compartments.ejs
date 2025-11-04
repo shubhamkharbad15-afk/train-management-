@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Compartments & Seats</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <%- include('partials/header') %>
+    <div class="content">
+      <h2>Train Compartments</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Compartment ID</th>
+            <th>Train Name</th>
+            <th>Compartment Type</th>
+            <th>Capacity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% compartments.forEach(comp => { %>
+            <tr>
+              <td><%= comp.compartment_id %></td>
+              <td><%= comp.train_name %></td>
+              <td><%= comp.compartment_type %></td>
+              <td><%= comp.capacity %></td>
+              <td>
+                <a href="/compartments/seats/<%= comp.compartment_id %>" style="background: #28a745; color: white; margin-right: 5px;">View Seats</a>
+                <a href="/compartments/delete/<%= comp.compartment_id %>">Delete</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <h3>Add Compartment</h3>
+      <form method="POST" action="/compartments/add">
+        <select name="train_id" required>
+          <option value="">Select Train</option>
+          <% trains.forEach(train => { %>
+            <option value="<%= train.train_id %>"><%= train.train_name %> (<%= train.source %> - <%= train.destination %>)</option>
+          <% }) %>
+        </select>
+        <select name="compartment_type" required>
+          <option value="">Select Compartment Type</option>
+          <option value="General">General</option>
+          <option value="Sleeper">Sleeper</option>
+          <option value="AC 3 Tier">AC 3 Tier</option>
+          <option value="AC 2 Tier">AC 2 Tier</option>
+          <option value="AC First Class">AC First Class</option>
+          <option value="Executive Class">Executive Class</option>
+        </select>
+        <input type="number" name="capacity" placeholder="Capacity" required>
+        <button type="submit">Add Compartment</button>
+      </form>
+
+      <% if (seats && seats.length > 0) { %>
+        <h2 style="margin-top: 40px;">Seats in Compartment #<%= currentCompartmentId %></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Seat ID</th>
+              <th>Seat Number</th>
+              <th>Window Seat</th>
+              <th>Available</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% seats.forEach(seat => { %>
+              <tr>
+                <td><%= seat.seat_id %></td>
+                <td><%= seat.seat_number %></td>
+                <td><%= seat.is_window_seat ? 'Yes' : 'No' %></td>
+                <td><span style="color: <%= seat.is_available ? 'green' : 'red' %>"><%= seat.is_available ? 'Available' : 'Occupied' %></span></td>
+                <td><a href="/compartments/seats/delete/<%= seat.seat_id %>">Delete</a></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <h3>Add Seat to Compartment #<%= currentCompartmentId %></h3>
+        <form method="POST" action="/compartments/seats/add">
+          <input type="hidden" name="compartment_id" value="<%= currentCompartmentId %>">
+          <input type="text" name="seat_number" placeholder="Seat Number (e.g., A1, B23)" required>
+          <select name="is_window_seat" required>
+            <option value="">Is Window Seat?</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+          <select name="is_available" required>
+            <option value="">Is Available?</option>
+            <option value="true">Available</option>
+            <option value="false">Occupied</option>
+          </select>
+          <button type="submit">Add Seat</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
